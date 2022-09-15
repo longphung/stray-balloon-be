@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "strayballoon-be"
 version = "0.1.0"
-description = "Swinburn Tech Enquiry Project Backend"
+description = "Swinburne Tech Enquiry Project Backend"
 authors = [
     "Charles Ficarra <104112527@student.swin.edu.au>",
     "Phung Nguyen <104099316@student.swin.edu.au>",
