@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "strayballoon-be"
+version = "0.1.0"
+description = "Swinburn Tech Enquiry Project Backend"
+authors = [
+    "Charles Ficarra <104112527@student.swin.edu.au>",
+    "Phung Nguyen <104099316@student.swin.edu.au>",
+    "Agung Sidi <104067766@student.swin.edu.au>",
+    "Mitchell Knight <104129200@student.swin.edu.au>",
+    "Akhmadjon Khamidov <104129200@student.swin.edu.au>"
+]
+readme = "README.md"
+packages = [{include = "strayballoon_be"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Django = "^3.2"
+asgiref = "^3.5.2"
+djongo = "^1.3.6"
+pip    = "^22.2.1"
+pymongo = "^3.12.3"
+python-dotenv = "^0.21.0"
+pytz = "^2022.2.1"
+setuptools = "^63.3.0"
+sqlparse = "^0.2.4"
+wheel = "^0.37.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
