@@ -29,4 +29,8 @@ To start, [Poetry][1] is required, installation guide can be found here: https:/
     python manage.py runserver
 ```
 
+# Documentation
+
+Once server is run, API documentation can be found at endpoint `/api/schema/doc`. Example: `http://localhost:8000/api/schema/redoc/`
+
 [1]: https://python-poetry.org/

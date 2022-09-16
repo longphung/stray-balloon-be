@@ -15,9 +15,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
+from rest_framework import routers
+
+from quickstart import views
+
+router = routers.DefaultRouter()
+# Quick start app management apis
+router.register(r'users', views.UserViewSet)
+router.register(r'groups', views.GroupViewSet)
+
 
 urlpatterns = [
-    # path('polls/', include('polls.urls')),
+    path('', include(router.urls)),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
 ]

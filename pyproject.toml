@@ -25,6 +25,8 @@ setuptools = "^63.3.0"
 sqlparse = "^0.2.4"
 wheel = "^0.37.1"
 djangorestframework = "^3.13.1"
+PyYAML = "^6.0"
+drf-spectacular = "^0.24.0"
 
 
 [tool.poetry.group.dev.dependencies]
