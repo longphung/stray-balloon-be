@@ -33,4 +33,6 @@ To start, [Poetry][1] is required, installation guide can be found here: https:/
 
 Once server is run, API documentation can be found at endpoint `/api/schema/doc`. Example: `http://localhost:8000/api/schema/redoc/`
 
+![Documentation UI Example](docs/images/documentation-ui-example.png)
+
 [1]: https://python-poetry.org/
