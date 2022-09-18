@@ -8,30 +8,23 @@ The app is written in Django with MongoDb for database.
 This project comes with [Poetry][1] for package management.
 To start, [Poetry][1] is required, installation guide can be found here: https://python-poetry.org/docs/
 
-1. Install project dependencies:
 ```shell
-    poetry install
-```
-
-2. Although not necessary, t is recommended that the app is in a virtual environment for independent package
-   management:
-```shell
+    # 1. Set the app in a virtual environment:
     python -m venv .
-```
-
-3. Then simply apply the migrations for the first time:
-```shell
+    # 2. Enter the virtual environment:
+    poetry shell
+    # 3. Install dependencies:
+    poetry install
+    # 4. On the first time you run the app , run migrations:
     python manage.py migrate
-```
-
-4. You can now run the development server:
-```shell
+    # 5. Run development server:
     python manage.py runserver
 ```
 
 # Documentation
 
-Once server is run, API documentation can be found at endpoint `/api/schema/doc`. Example: `http://localhost:8000/api/schema/redoc/`
+Once server is run, depending on your BASE_URL, API documentation can be found at endpoint `/schema/doc`. Example:
+`http://localhost:8000/schema/redoc/`
 
 ![Documentation UI Example](docs/images/documentation-ui-example.png)
 
