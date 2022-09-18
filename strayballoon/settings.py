@@ -19,6 +19,7 @@ PYTHON_ENV = os.environ.get('PYTHON_ENV')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_URL = os.environ.get('BASE_URL')
 
 
 # Quick-start development settings - unsuitable for production
@@ -80,15 +81,27 @@ WSGI_APPLICATION = 'strayballoon.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'strayballoon-dev',
-        'CLIENT': {
-            'host': os.environ.get('DATABASE_URL') or 'mongodb://localhost:27017/',
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL[:10] == 'mongodb://':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'djongo',
+            'NAME': 'strayballoon-dev',
+            'CLIENT': {
+                'host': DATABASE_URL
+            }
         }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'strayballoon-dev',
+            'CLIENT': {
+                'host': DATABASE_URL
+            }
+        }
+    }
 
 
 # Password validation
@@ -125,7 +138,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = BASE_URL + 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

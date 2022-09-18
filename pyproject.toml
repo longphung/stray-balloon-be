@@ -10,7 +10,9 @@ authors = [
     "Akhmadjon Khamidov <104129200@student.swin.edu.au>"
 ]
 readme = "README.md"
-packages = [{include = "strayballoon_be"}]
+packages = [
+    {include = "strayballoon"},
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
