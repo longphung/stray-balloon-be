@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'strayballoon.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL[:10] == 'mongodb://':
+if DATABASE_URL[:7] == 'mongodb':
     DATABASES = {
         'default': {
             'ENGINE': 'djongo',
