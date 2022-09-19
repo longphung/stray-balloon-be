@@ -23,4 +23,5 @@ jobs:
     - name: Deploy
       run: |
         screen -XS backend exit | true
-        screen -dmS backend /home/github-runner/.local/bin/poetry run python manage.py runserver
+        screen -dmS backend
+        screen -XS backend bash -c 'python manage.py runserver'
