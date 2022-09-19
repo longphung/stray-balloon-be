@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "strayballoon-be"
+name = "strayballoon"
 version = "0.1.0"
 description = "Swinburne Tech Enquiry Project Backend"
 authors = [
@@ -11,6 +11,7 @@ authors = [
 ]
 readme = "README.md"
 packages = [
+    {include = "quickstart"},
     {include = "strayballoon"},
 ]
 
