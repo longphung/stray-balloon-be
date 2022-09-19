@@ -17,6 +17,7 @@ jobs:
         python manage.py test
   deploy:
     runs-on: self-hosted
+    needs: build
     steps:
     - name: Deploy
       run: |
