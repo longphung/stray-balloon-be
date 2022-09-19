@@ -11,7 +11,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install Dependencies
       run: |
-        poetry install
+        /home/github-runner/.local/bin/poetry install
     - name: Run Tests
       run: |
         python manage.py test
