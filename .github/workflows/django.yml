@@ -28,4 +28,4 @@ jobs:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
         PYTHON_ENV: 'development'
       run: |
-          /home/github-runner/.local/bin/poetry run gunicorn strayballoon.wsgi:application --name backend --daemon
+          gunicorn strayballoon.wsgi:application --name backend --daemon
