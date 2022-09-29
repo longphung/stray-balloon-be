@@ -21,6 +21,9 @@ jobs:
     needs: build
     steps:
     - uses: actions/checkout@v3
+    - name: Set path
+      run:
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
     - name: Deploy
       env:
         BASE_URL: 'api/'
