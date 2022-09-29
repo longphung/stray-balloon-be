@@ -35,4 +35,5 @@ jobs:
         python manage.py collectstatic --no-input
     - name: Deploy
       run: |
+        pkill gunicorn || true
         gunicorn strayballoon.wsgi:application --name backend --daemon
