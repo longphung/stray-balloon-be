@@ -139,7 +139,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = BASE_URL + 'static/'
-STATIC_ROOT = BASE_DIR.as_posix() + '/dist'
+if os.environ.get('PYTHON_ENV') == 'development':
+    STATIC_ROOT = BASE_DIR.as_posix() + '/dist'
+else:
+    STATIC_ROOT = '/var/www/html/static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

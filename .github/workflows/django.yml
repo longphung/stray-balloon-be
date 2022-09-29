@@ -19,17 +19,20 @@ jobs:
   deploy:
     runs-on: self-hosted
     needs: build
+    env:
+      BASE_URL: 'api/'
+      SB_SECRET_KEY: 'django-super-insecure-jl0&pk%5+qlgj@tn#b7)t=zpkbu2lb3#ym(vwkiyx%h$%-5gup'
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PYTHON_ENV: 'staging'
     steps:
     - uses: actions/checkout@v3
     - name: Set path
       run:
         echo "$HOME/.local/bin" >> $GITHUB_PATH
-    - name: Deploy
-      env:
-        BASE_URL: 'api/'
-        SB_SECRET_KEY: 'django-super-insecure-jl0&pk%5+qlgj@tn#b7)t=zpkbu2lb3#ym(vwkiyx%h$%-5gup'
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        PYTHON_ENV: 'development'
+    - name: Setup
       run: |
         python manage.py migrate
+        python manage.py collectstatic
+    - name: Deploy
+      run: |
         gunicorn strayballoon.wsgi:application --name backend --daemon
