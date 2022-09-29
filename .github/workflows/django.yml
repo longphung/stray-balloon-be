@@ -13,9 +13,6 @@ jobs:
       run: |
         /home/github-runner/.local/bin/poetry export -f requirements.txt --output requirements.txt
         pip install --no-cache-dir -r requirements.txt
-    - name: Run Migrate
-      run:
-        python manage.py migrate
     - name: Run Tests
       run: |
         python manage.py test
@@ -34,4 +31,5 @@ jobs:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
         PYTHON_ENV: 'development'
       run: |
+        python manage.py migrate
         gunicorn strayballoon.wsgi:application --name backend --daemon
