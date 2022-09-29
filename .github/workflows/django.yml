@@ -22,7 +22,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Deploy
+      env:
+        BASE_URL: 'api/'
+        SB_SECRET_KEY: 'django-super-insecure-jl0&pk%5+qlgj@tn#b7)t=zpkbu2lb3#ym(vwkiyx%h$%-5gup'
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        PYTHON_ENV: 'development'
       run: |
-        screen -XS backend exit | true
-        screen -dmS backend
-        screen -XS backend bash -c 'python manage.py runserver'
+          poetry run gunicorn strayballoon.wsgi:application --name backend --daemon
