@@ -142,8 +142,8 @@ if os.environ.get('PYTHON_ENV') == 'development':
     STATIC_ROOT = BASE_DIR.as_posix() + '/dist'
     STATIC_URL = BASE_URL + 'static/'
 else:
-    STATIC_ROOT = '/var/www/html/static'
-    STATIC_URL = 'static/'
+    STATIC_ROOT = '/var/www/frontend'
+    STATIC_URL = BASE_URL + 'static/'
 
 CSRF_TRUSTED_ORIGINS = ['strayballoon.phungnnl.dev']
 
