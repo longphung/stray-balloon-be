@@ -2,6 +2,7 @@
 
 This is Group 1.1 Swinburne Tech Enquiry Project: Stray Balloon backend repository.
 The app is written in Django with MongoDb for database.
+[![Django CI](https://github.com/longphung/strayballoon-be/actions/workflows/django.yml/badge.svg?branch=main)](https://github.com/longphung/strayballoon-be/actions/workflows/django.yml)
 
 # Getting Started
 
