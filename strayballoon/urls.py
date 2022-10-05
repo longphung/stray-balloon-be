@@ -29,7 +29,7 @@ router.register(r'groups', views.GroupViewSet)
 
 base_patterns = [
     path('', include(router.urls)),
-    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('schema/classname', SpectacularAPIView.as_view(), name='schema'),
     path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
