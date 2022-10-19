@@ -21,7 +21,6 @@ PYTHON_ENV = os.environ.get('PYTHON_ENV')
 BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_URL = os.environ.get('BASE_URL')
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -32,7 +31,6 @@ SECRET_KEY = os.environ.get('SB_SECRET_KEY')
 DEBUG = True if PYTHON_ENV != 'production' else False
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -45,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_spectacular',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +76,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'strayballoon.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -103,7 +101,6 @@ else:
         }
     }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -122,7 +119,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -133,7 +129,6 @@ TIME_ZONE = 'Australia/Melbourne'
 USE_I18N = False
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -159,7 +154,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
 # drf_spectacular settings
 SPECTACULAR_SETTINGS = {

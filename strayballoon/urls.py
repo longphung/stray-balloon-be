@@ -20,6 +20,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from rest_framework import routers
 
 from quickstart import views
+from quickstart.views import CustomAuthToken
 
 router = routers.DefaultRouter()
 # Quick start app management apis
@@ -33,6 +34,7 @@ base_patterns = [
     path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+    path('auth/', CustomAuthToken.as_view())
 ]
 
 urlpatterns = [
