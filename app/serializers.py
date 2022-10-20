@@ -1,0 +1,14 @@
+from rest_framework import serializers
+from app.models import Question, QuestionAnswer
+
+
+class QuestionSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['description', 'level', 'additional_resource', 'type', 'feedback']
+
+
+class QuestionAnswerSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = QuestionAnswer
+        fields = ['question_id', 'description', 'is_correct']

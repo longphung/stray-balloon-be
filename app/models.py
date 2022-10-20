@@ -16,7 +16,7 @@ class ClassRoomStudents(models.Model):
         unique_together = (('student_ids', 'class_room_ids'),)
 
 
-# Create your models here.
+# Question descriptions and data
 class Question(models.Model):
     description = models.CharField(max_length=65_535)
     level = models.PositiveSmallIntegerField()
@@ -25,6 +25,7 @@ class Question(models.Model):
     feedback = models.CharField(max_length=65_535)
 
 
+# Multiple selection answers for each session
 class QuestionAnswer(models.Model):
     question_id = models.ForeignKey(Question, on_delete=models.RESTRICT)
     description = models.CharField(max_length=65_535)
@@ -35,7 +36,7 @@ class Session(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     instructor_id = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='instructor')
-    questions = models.JSONField()
+    questions = models.ForeignKey(Question, on_delete=models.RESTRICT)
 
 
 class SessionProgress(models.Model):

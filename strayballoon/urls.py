@@ -21,11 +21,14 @@ from rest_framework import routers
 
 from quickstart import views
 from quickstart.views import CustomAuthToken
+from app import views as app_views
 
 router = routers.DefaultRouter()
 # Quick start app management apis
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
+router.register(r'questions', app_views.QuestionsViewSet)
+router.register(r'question-answers', app_views.QuestionAnswersViewSet)
 
 
 base_patterns = [
