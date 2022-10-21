@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework import routers
 
 from quickstart import views
@@ -35,7 +35,7 @@ base_patterns = [
     path('', include(router.urls)),
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    path('schema/swagger/', SpectacularRedocView.as_view(url_name='schema'), name='swagger'),
+    path('schema/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('auth/', CustomAuthToken.as_view())
