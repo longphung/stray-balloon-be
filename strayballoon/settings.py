@@ -165,5 +165,6 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Swinburne Tech Enquiry Project',
     'VERSION': '0.1.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
     # OTHER SETTINGS
 }

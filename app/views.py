@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions
-from app.models import Question, QuestionAnswer, SessionProgress
-from app.serializers import QuestionSerializer, QuestionAnswerSerializer, SessionProgressSerializer
+from app.models import Question, QuestionAnswer, SessionProgress, Session, SessionsQuestions
+from app.serializers import QuestionSerializer, QuestionAnswerSerializer, SessionProgressSerializer, SessionSerializer, \
+    SessionQuestionsSerializer
 
 
 class QuestionsViewSet(viewsets.ModelViewSet):
@@ -27,4 +28,22 @@ class SessionProgressViewSet(viewsets.ModelViewSet):
     """
     queryset = SessionProgress.objects.all().order_by('student_id')
     serializer_class = SessionProgressSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class SessionViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for fetching SessionProgress data
+    """
+    queryset = Session.objects.all().order_by('id')
+    serializer_class = SessionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class SessionsQuestionsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for fetching SessionProgress data
+    """
+    queryset = SessionsQuestions.objects.all().order_by('session_id')
+    serializer_class = SessionQuestionsSerializer
     permission_classes = [permissions.IsAuthenticated]

@@ -29,6 +29,9 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'questions', app_views.QuestionsViewSet)
 router.register(r'question-answers', app_views.QuestionAnswersViewSet)
+router.register(r'session-progress', app_views.SessionProgressViewSet)
+router.register(r'session', app_views.SessionViewSet)
+router.register(r'sessions-questions', app_views.SessionsQuestionsViewSet)
 
 
 base_patterns = [
