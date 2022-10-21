@@ -9,11 +9,11 @@ class ClassRoom(models.Model):
 
 
 class ClassRoomStudents(models.Model):
-    student_ids = models.ForeignKey(User, on_delete=models.RESTRICT)
-    class_room_ids = models.ForeignKey(ClassRoom, on_delete=models.RESTRICT)
+    student_id = models.ForeignKey(User, on_delete=models.RESTRICT)
+    class_room_id = models.ForeignKey(ClassRoom, on_delete=models.RESTRICT)
 
     class Meta:
-        unique_together = (('student_ids', 'class_room_ids'),)
+        unique_together = (('student_id', 'class_room_id'),)
 
 
 # Question descriptions and data
@@ -34,20 +34,20 @@ class QuestionAnswer(models.Model):
 class Session(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    instructor_id = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='instructor')
+    instructor_id = models.ForeignKey(User, on_delete=models.RESTRICT)
 
 
 class SessionsQuestions(models.Model):
-    session_id = models.ForeignKey(Session, on_delete=models.RESTRICT, related_name='session')
-    question_id = models.ForeignKey(Question, on_delete=models.RESTRICT, related_name='question')
+    session_id = models.ForeignKey(Session, on_delete=models.RESTRICT)
+    question_id = models.ForeignKey(Question, on_delete=models.RESTRICT)
 
     class Meta:
         unique_together = (('session_id', 'question_id'),)
 
 
 class SessionProgress(models.Model):
-    student_id = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='student')
-    session_id = models.ForeignKey(Session, on_delete=models.RESTRICT, related_name='session')
+    student_id = models.ForeignKey(User, on_delete=models.RESTRICT)
+    session_id = models.ForeignKey(Session, on_delete=models.RESTRICT)
 
     class Meta:
-        unique_together = (('student_ids', 'session_id'),)
+        unique_together = (('student_id', 'session_id'),)

@@ -15,9 +15,4 @@ class Migration(migrations.Migration):
             model_name='question',
             name='additional_resource',
         ),
-        migrations.AlterField(
-            model_name='session',
-            name='questions',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to='app.question'),
-        ),
     ]
