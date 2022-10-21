@@ -35,12 +35,19 @@ class Session(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     instructor_id = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='instructor')
-    questions = models.ForeignKey(Question, on_delete=models.RESTRICT)
+
+
+class SessionsQuestions(models.Model):
+    session_id = models.ForeignKey(Session, on_delete=models.RESTRICT, related_name='session')
+    question_id = models.ForeignKey(Question, on_delete=models.RESTRICT, related_name='question')
+
+    class Meta:
+        unique_together = (('session_id', 'question_id'),)
 
 
 class SessionProgress(models.Model):
-    student_ids = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='students')
-    session_id = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='session')
+    student_id = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='student')
+    session_id = models.ForeignKey(Session, on_delete=models.RESTRICT, related_name='session')
 
     class Meta:
         unique_together = (('student_ids', 'session_id'),)
