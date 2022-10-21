@@ -5,7 +5,7 @@ from app.models import Question, QuestionAnswer
 class QuestionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Question
-        fields = ['description', 'level', 'additional_resource', 'type', 'feedback']
+        fields = ['description', 'level', 'type', 'feedback']
 
 
 class QuestionAnswerSerializer(serializers.HyperlinkedModelSerializer):
