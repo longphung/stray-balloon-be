@@ -48,6 +48,22 @@ class SessionsQuestions(models.Model):
 class SessionProgress(models.Model):
     student_id = models.ForeignKey(User, on_delete=models.RESTRICT)
     session_id = models.ForeignKey(Session, on_delete=models.RESTRICT)
+    attended = models.BooleanField()
+    '''
+    Progress is an array with each item having the shape of:
+    {
+        question_status,
+        answer_taken,
+        time_taken
+    }
+    question_status is straightforward
+
+    answer_taken can be used to determine whether it was correct or not,
+    hence storing a correct field is redundant and provides less data than storing answer_taken
+
+    time_taken is the time taken for that individual question
+    '''
+    progress = models.JSONField()
 
     class Meta:
         unique_together = (('student_id', 'session_id'),)

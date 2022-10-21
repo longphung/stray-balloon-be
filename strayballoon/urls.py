@@ -35,6 +35,7 @@ base_patterns = [
     path('', include(router.urls)),
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('schema/swagger/', SpectacularRedocView.as_view(url_name='schema'), name='swagger'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('auth/', CustomAuthToken.as_view())
