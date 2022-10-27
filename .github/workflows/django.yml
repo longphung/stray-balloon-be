@@ -39,7 +39,7 @@ jobs:
     - name: Deploy
       run: |
         env
-        pkill supervisor | true
+        sudo pkill supervisor | true
         sudo supervisord
         sudo supervisorctl reread
         sudo supervisorctl update
