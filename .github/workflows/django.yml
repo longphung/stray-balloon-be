@@ -39,6 +39,7 @@ jobs:
     - name: Deploy
       run: |
         env
+        supervisorctl reload
         supervisorctl reread
         supervisorctl update
         supervisorctl restart all
