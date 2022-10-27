@@ -40,7 +40,7 @@ jobs:
       run: |
         env
         sudo pkill supervisor | true
-        sudo supervisord
+        supervisord
         sudo supervisorctl reread
         sudo supervisorctl update
         sudo supervisorctl restart all
