@@ -16,7 +16,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class AuthResponseSerializer(serializers.Serializer):
     token = serializers.CharField()
-    user_id = serializers.IntegerField(min_value=0)
+    userId = serializers.IntegerField(min_value=0, source='user_id')
     email = serializers.EmailField()
     groups = serializers.SlugRelatedField(
         many=True,
