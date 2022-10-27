@@ -18,3 +18,8 @@ class AuthResponseSerializer(serializers.Serializer):
     token = serializers.CharField()
     user_id = serializers.IntegerField(min_value=0)
     email = serializers.EmailField()
+    groups = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='name'
+    )

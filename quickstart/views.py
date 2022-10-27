@@ -40,5 +40,6 @@ class CustomAuthToken(ObtainAuthToken):
         return Response(AuthResponseSerializer({
             'token': token.key,
             'user_id': user.pk,
-            'email': user.email
+            'email': user.email,
+            'groups': user.groups
         }).data)
