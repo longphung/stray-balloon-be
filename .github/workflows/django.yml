@@ -39,8 +39,6 @@ jobs:
     - name: Deploy
       run: |
         env
-        sudo pkill supervisor | true
-        supervisord
-        sudo supervisorctl reread
-        sudo supervisorctl update
-        sudo supervisorctl restart all
+        kill -9 `cat $HOME/pid.nohup`
+        nohup daphne -b 0.0.0.0 -p 8000 strayballoon.asgi:application >& nohup.out &
+        echo $! > $HOME/pid.nohup
