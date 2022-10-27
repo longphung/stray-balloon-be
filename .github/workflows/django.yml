@@ -41,5 +41,5 @@ jobs:
         env
         pkill daphne | true
         kill -9 `cat $HOME/pid.nohup` | true
-        nohup daphne -b 0.0.0.0 -p 8000 strayballoon.asgi:application < /dev/null & > /dev/null &
+        RUNNER_TRACKING_ID="" && nohup daphne -b 0.0.0.0 -p 8000 strayballoon.asgi:application < /dev/null & > /dev/null &
         echo $! > $HOME/pid.nohup
