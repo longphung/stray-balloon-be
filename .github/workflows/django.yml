@@ -25,6 +25,7 @@ jobs:
       BASE_URL: 'api/'
       SB_SECRET_KEY: 'django-super-insecure-jl0&pk%5+qlgj@tn#b7)t=zpkbu2lb3#ym(vwkiyx%h$%-5gup'
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
       PYTHON_ENV: 'staging'
     steps:
     - uses: actions/checkout@v3
