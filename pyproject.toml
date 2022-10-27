@@ -30,6 +30,9 @@ wheel = "^0.37.1"
 djangorestframework = "^3.13.1"
 PyYAML = "^6.0"
 drf-spectacular = "^0.24.0"
+channels = "^4.0.0"
+daphne = "^4.0.0"
+channels-redis = "^4.0.0"
 
 
 [tool.poetry.group.dev.dependencies]

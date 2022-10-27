@@ -15,13 +15,13 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework import routers
 
 from quickstart import views
 from quickstart.views import CustomAuthToken
-from app import views as app_views
+from app import consumers, views as app_views
 
 router = routers.DefaultRouter()
 # Quick start app management apis
@@ -32,6 +32,11 @@ router.register(r'question-answers', app_views.QuestionAnswersViewSet)
 router.register(r'session-progress', app_views.SessionProgressViewSet)
 router.register(r'session', app_views.SessionViewSet)
 router.register(r'sessions-questions', app_views.SessionsQuestionsViewSet)
+
+
+websocket_urlpatterns = [
+    re_path(r"ws/chat/(?P<room_name>\w+)$", consumers.ChatConsumer.as_asgi()),
+]
 
 
 base_patterns = [

@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -167,4 +168,14 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
     # OTHER SETTINGS
+}
+
+ASGI_APPLICATION = "strayballoon.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": ["redis://:uYH68K3eBe2XJP5yJpNGwXtpZw2YEePC@redis-17534.c296.ap-southeast-2-1.ec2.cloud.redislabs.com:17534"]
+        }
+    }
 }
