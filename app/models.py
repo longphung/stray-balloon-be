@@ -32,8 +32,8 @@ class QuestionAnswer(models.Model):
 
 
 class Session(models.Model):
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(blank=True)
+    end_time = models.DateTimeField(blank=True)
     instructor_id = models.ForeignKey(User, on_delete=models.RESTRICT)
 
 
@@ -52,6 +52,7 @@ class SessionProgress(models.Model):
     '''
     Progress is an array with each item having the shape of:
     {
+        question_id,
         question_status,
         answer_taken,
         time_taken
