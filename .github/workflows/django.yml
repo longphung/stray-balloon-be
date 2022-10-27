@@ -40,5 +40,5 @@ jobs:
       run: |
         env
         kill -9 `cat $HOME/pid.nohup` | true
-        nohup daphne -b 0.0.0.0 -p 8000 strayballoon.asgi:application >& nohup.out &
+        nohup daphne -b 0.0.0.0 -p 8000 strayballoon.asgi:application &
         echo $! > $HOME/pid.nohup
