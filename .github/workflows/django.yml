@@ -39,7 +39,6 @@ jobs:
     - name: Deploy
       run: |
         env
-#          environment=BASE_URL="%(ENV_BASE_URL)s",SB_SECRET_KEY="%(ENV_SB_SECRET_KEY)s",DATABASE_URL="%(ENV_DATABASE_URL)s",REDIS_URL="%(ENV_REDIS_URL)s",PYTHON_ENV="%(ENV_PYTHON_ENV)s"
         supervisorctl reread
         supervisorctl update
         supervisorctl restart all
