@@ -69,7 +69,6 @@ class AnswersOfQuestionsViews(views.APIView):
             )
         question.answers = QuestionAnswer.objects.filter(question_id=question_id)
         serializer = AnswersOfQuestionsSerializer(question)
-        print(serializer.data)
         return Response(
             serializer.data
         )
