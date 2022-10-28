@@ -21,7 +21,7 @@ class Question(models.Model):
     description = models.CharField(max_length=65_535)
     level = models.PositiveSmallIntegerField()
     type = models.CharField(max_length=255)
-    feedback = models.CharField(max_length=65_535)
+    feedback = models.CharField(max_length=65_535, blank=True)
 
 
 # Multiple selection answers for each session
