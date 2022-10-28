@@ -57,6 +57,10 @@ class SessionConsumer(AsyncWebsocketConsumer):
         roles = user.groups.values_list('name', flat=True)  # QuerySet Object
         roles_as_list = await get_roles(roles)
 
+        if user.is_anonymous:
+            await self.close()
+            return
+
         # Join room group
         await self.channel_layer.group_add(self.session_group_name, self.channel_name)
 
@@ -74,8 +78,9 @@ class SessionConsumer(AsyncWebsocketConsumer):
                 session_id = session.id
                 session_status = "in_progress"
             await self.send(json.dumps({
-                "session_status": session_status,
-                "session_id": session_id
+                "type": "session_info_instructor",
+                "sessionStatus": session_status,
+                "sessionId": session_id
             }))
 
     async def disconnect(self, close_code):
@@ -152,6 +157,7 @@ class SessionConsumer(AsyncWebsocketConsumer):
         # Send session_statusto WebSocket
         await self.send(text_data=json.dumps(
             {
+                "type": "session_update",
                 "session_status": session_status,
                 "username": username,
                 "session_id": session_id,
@@ -160,7 +166,8 @@ class SessionConsumer(AsyncWebsocketConsumer):
 
     async def session_join(self, event):
         await self.send(text_data=json.dumps({
-            "role": event['role'],
+            "type": "session_join",
+            "role": json.loads(event['role']),
             "username": event['username'],
         }))
 
@@ -174,6 +181,7 @@ class SessionConsumer(AsyncWebsocketConsumer):
             del student_info['is_superuser']
             del student_info['user_permissions']
             await self.send(text_data=json.dumps({
+                "type": "session_progress_started",
                 "student": student_info,
                 "session_id": event["session_id"],
                 "session_progress_id": event["session_progress_id"],
