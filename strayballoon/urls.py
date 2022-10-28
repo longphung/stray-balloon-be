@@ -47,7 +47,8 @@ base_patterns = [
     path('schema/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('auth/', CustomAuthToken.as_view())
+    path('auth/', CustomAuthToken.as_view()),
+    path('answers-of-question/', app_views.AnswersOfQuestionsViews.as_view(), name="AnswersOfQuestions")
 ]
 
 urlpatterns = [

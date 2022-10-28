@@ -30,3 +30,12 @@ class SessionQuestionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SessionsQuestions
         fields = '__all__'
+
+
+class AnswersOfQuestionsSerializer(serializers.ModelSerializer):
+    answers = QuestionAnswerSerializer(many=True)
+
+    # def get_answers(self, instance):
+    class Meta:
+        model = Question
+        fields = '__all__'
