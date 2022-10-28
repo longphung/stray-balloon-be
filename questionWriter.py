@@ -30,7 +30,7 @@ with open('questions.csv', newline='', encoding='utf-8-sig') as csvfile:
             answer_key = "%s %d" % ('answer', i)
             jsonQuestionAnswer = {
                 "description": row[answer_key],
-                "is_correct": row[answer_key] == row['correct answer'],
+                "is_correct": row[answer_key] == int(row['correct answer']) + 1,
                 "question_id": question['id']
             }
             questionAnswerRes = requests.post(url + 'question-answers/', headers=headers, json=jsonQuestionAnswer)

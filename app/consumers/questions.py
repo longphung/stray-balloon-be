@@ -15,10 +15,14 @@ class QuestionsConsumer(JsonWebsocketConsumer):
         self.session_name = None
 
     def connect(self):
-        self.session_name = self.scope["url_route"]["kwargs"]["session_name"]
-        self.session_group_name = "session_%s" % self.session_name
+        self.session_name = self.scope["url_route"]["kwargs"]["session_questions_name"]
+        self.session_group_name = "session_questions_%s" % self.session_name
+        user = self.scope["user"]
+        if user.is_anonymous:
+            self.close()
+            return
         # Join room group
-        await self.channel_layer.group_add(self.session_group_name, self.channel_name)
+        async_to_sync(self.channel_layer.group_add)(self.session_group_name, self.channel_name)
         # Called on connection.
         # To accept the connection call:
         self.accept()
@@ -48,7 +52,7 @@ class QuestionsConsumer(JsonWebsocketConsumer):
 
     def disconnect(self, close_code):
         # Called when the socket closes
-        await self.channel_layer.group_discard(self.session_group_name, self.channel_name)
+        async_to_sync(self.channel_layer.group_discard)(self.session_group_name, self.channel_name)
 
     def question_answered(self, event):
         student_id = event["student_id"]

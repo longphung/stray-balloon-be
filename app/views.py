@@ -62,7 +62,11 @@ class AnswersOfQuestionsViews(views.APIView):
     )
     def get(self, request):
         question_id = request.query_params['id']
-        question = Question.objects.filter(id=question_id).get()
+        question = Question.objects.filter(id=question_id).first()
+        if question is None:
+            return Response(
+                {}, status=404
+            )
         question.answers = QuestionAnswer.objects.filter(question_id=question_id)
         serializer = AnswersOfQuestionsSerializer(question)
         print(serializer.data)

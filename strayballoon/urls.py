@@ -37,6 +37,7 @@ router.register(r'sessions-questions', app_views.SessionsQuestionsViewSet)
 websocket_urlpatterns = [
     re_path(r"ws/chat/(?P<room_name>\w+)$", consumers.ChatConsumer.as_asgi()),
     re_path(r"ws/session/(?P<session_name>\w+)$", consumers.SessionConsumer.as_asgi()),
+    re_path(r"ws/session-questions/(?P<session_questions_name>\w+)$", consumers.QuestionsConsumer.as_asgi()),
 ]
 
 
