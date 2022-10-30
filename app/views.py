@@ -1,6 +1,8 @@
 from rest_framework import viewsets, permissions, views
+from django.contrib.auth.models import User, Group
 from drf_spectacular import utils
 from rest_framework.response import Response
+from quickstart import serializers
 from app.models import Question, QuestionAnswer, SessionProgress, Session, SessionsQuestions
 from app.serializers import QuestionSerializer, QuestionAnswerSerializer, SessionProgressSerializer, SessionSerializer, \
     SessionQuestionsSerializer, AnswersOfQuestionsSerializer
@@ -73,6 +75,7 @@ class AnswersOfQuestionsViews(views.APIView):
             serializer.data
         )
 
+
 class SessionProgressOfStudent(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = SessionProgressSerializer
@@ -99,3 +102,22 @@ class SessionProgressOfStudent(views.APIView):
         return Response(
             serializer.data
         )
+
+
+class Students(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = serializers.UserSerializer
+
+    @utils.extend_schema(
+        responses={
+            200: serializers.UserSerializer,
+            404: {},
+        },
+    )
+    def get(self):
+        student_group = Group.objects.filter(name='students').first()
+        user = User.objects.filter(groups=student_group).first()
+        if user is None:
+            return Response({}, status=404)
+        serializer = serializers.UserSerializer(user)
+        return Response(serializer.data)

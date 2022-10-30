@@ -47,7 +47,8 @@ base_patterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('auth/', CustomAuthToken.as_view()),
     path('answers-of-question/', app_views.AnswersOfQuestionsViews.as_view(), name="AnswersOfQuestions"),
-    path('session-progress-of-students/', app_views.SessionProgressOfStudent.as_view(), name="SessionProgressOfStudent")
+    path('session-progress-of-students/', app_views.SessionProgressOfStudent.as_view(), name="SessionProgressOfStudent"),
+    path('students/', app_views.Students.as_view(), name="Students")
 ]
 
 urlpatterns = [
