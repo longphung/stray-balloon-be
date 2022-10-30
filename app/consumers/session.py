@@ -113,23 +113,27 @@ class SessionConsumer(AsyncWebsocketConsumer):
         )
         if 'students' in roles_as_list:
             session = await get_session(instructor_id=self.session_name, end_time__isnull=True)
-            session_progress = await get_session_progress(session_id=session.id, student_id=user.id)
-            if session_progress is None:
-                session_progress_id = await create_session_progress(
-                    student_id=user,
-                    session_id=session,
-                    attended=True,
-                    progress=json.dumps([])
-                )
-            else:
-                session_progress_id = session_progress.id
+            session_progress_id = None
+            if session is not None:
+                session_progress = await get_session_progress(session_id=session.id, student_id=user.id)
+                if session_progress is None:
+                    session_progress_id = await create_session_progress(
+                        student_id=user,
+                        session_id=session,
+                        attended=True,
+                        progress=json.dumps([])
+                    )
+                else:
+                    session_progress_id = session_progress.id
             session_status = "in_progress"
-            await self.send(json.dumps({
+            ret_data = {
                 "type": "session_info_student",
                 "sessionStatus": session_status,
-                "sessionId": session.id,
-                'sessionProgressId': session_progress_id
-            }))
+            }
+            if session_progress_id is not None:
+                ret_data['sessionProgressId'] = session_progress_id
+                ret_data["sessionId"] = session.id
+            await self.send(json.dumps(ret_data))
         if 'instructors' in roles_as_list:
             session = await get_session(instructor_id=user.id, end_time__isnull=True)
             if session is None:
@@ -179,7 +183,12 @@ class SessionConsumer(AsyncWebsocketConsumer):
             #     session_id = await create_session(instructor_id=user)
 
             if session_status == 'started':
-                await update_session(session_id, start_time=datetime.datetime.now())
+                session = await get_session(id=session_id)
+                if session.end_time is None:
+                    await update_session(session_id, start_time=datetime.datetime.now())
+                else:
+                    session_id = await create_session(instructor_id=user)
+
                 await self.channel_layer.group_send(
                     self.session_group_name,
                     {
@@ -240,9 +249,9 @@ class SessionConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(
             {
                 "type": "session_update",
-                "session_status": session_status,
+                "sessionStatus": session_status,
                 "username": username,
-                "session_id": session_id,
+                "sessionId": session_id,
             })
         )
 
@@ -264,8 +273,8 @@ class SessionConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "type": "session_progress_started",
             "student": student_info,
-            "session_id": event["session_id"],
-            "session_progress_id": event["session_progress_id"],
+            "sessionId": event["session_id"],
+            "sessionProgressId": event["session_progress_id"],
         }))
 
     async def session_progress_update(self, event):
