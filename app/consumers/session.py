@@ -1,8 +1,9 @@
 import json
 import datetime
 from django.core.serializers import serialize
+from django.contrib.auth.models import User
 import django.db.utils
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 
@@ -26,6 +27,11 @@ def get_session(**kwargs):
     session = models.Session.objects.filter(**kwargs).first()
     return session
 
+@database_sync_to_async
+def get_user(**kwargs):
+    user = User.objects.filter(**kwargs)
+    return list(user)
+
 
 @database_sync_to_async
 def update_session(session_id, start_time=None, end_time=None):
@@ -42,6 +48,35 @@ def create_session_progress(**kwargs):
     session_progress = models.SessionProgress(**kwargs)
     session_progress.save()
     return session_progress.id
+
+
+@database_sync_to_async
+def handle_session_progress_update(self, data):
+    session_progress = models.SessionProgress.objects.filter(id=data["session_progress_id"]).first()
+    session_question_progress = json.loads(session_progress.progress)
+    for i in session_question_progress:
+        if i['question_id'] == data["question_id"]:
+            return
+
+    new_session_progress = {
+        "question_id": data['question_id'],
+        "question_status": data['question_status'],
+        "answer_taken": data['answer_taken'],
+        "time_taken": data['time_taken'],
+    }
+    session_question_progress.append(new_session_progress)
+
+    session_progress.progress = json.dumps(session_question_progress)
+    session_progress.save()
+    new_session_progress['id'] = session_progress.id
+    async_to_sync(self.channel_layer.group_send)(
+        self.session_group_name,
+        {
+            "type": "session_progress_update",
+            "student_id": data['user'].id,
+            "session_progress": new_session_progress,
+        }
+    )
 
 
 class SessionConsumer(AsyncWebsocketConsumer):
@@ -91,37 +126,50 @@ class SessionConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         # session_status can be "started" or "ended"
         text_data_json = json.loads(text_data)
-        session_status = text_data_json["session_status"]
         user = self.scope["user"]
         roles_list = user.groups.values_list('name', flat=True)  # QuerySet Object
         roles_as_list = await get_roles(roles_list)
-        session_id = text_data_json["session_id"]
+        payload = text_data_json["payload"]
+        data_type = text_data_json['type']
 
-        if 'instructors' not in roles_as_list or session_status not in ['started', 'ended']:
-            return
+        if data_type == 'session_progress_update':
+            await handle_session_progress_update(self, {
+                'session_progress_id': payload['session_progress_id'],
+                'question_id': payload['question_id'],
+                'question_status': payload['question_status'],
+                "answer_taken": payload['answer_taken'],
+                "time_taken": payload['time_taken'],
+                'user': user
+            })
 
-        if session_status == 'started':
-            await update_session(session_id, start_time=datetime.datetime.now())
-            await self.channel_layer.group_send(
-                self.session_group_name,
-                {
-                    "type": "session_update",
-                    "session_status": session_status,
-                    "username": user.username,
-                    "session_id": session_id
-                }
-            )
-        elif session_status == 'ended':
-            await update_session(session_id, end_time=datetime.datetime.now())
-            await self.channel_layer.group_send(
-                self.session_group_name,
-                {
-                    "type": "session_update",
-                    "session_status": session_status,
-                    "username": user.username,
-                    "session_id": session_id
-                }
-            )
+        if data_type == 'session_update':
+            session_status = payload["session_status"]
+            session_id = payload["session_id"]
+            if 'instructors' not in roles_as_list or session_status not in ['started', 'ended']:
+                return
+
+            if session_status == 'started':
+                await update_session(session_id, start_time=datetime.datetime.now())
+                await self.channel_layer.group_send(
+                    self.session_group_name,
+                    {
+                        "type": "session_update",
+                        "session_status": session_status,
+                        "username": user.username,
+                        "session_id": session_id
+                    }
+                )
+            elif session_status == 'ended':
+                await update_session(session_id, end_time=datetime.datetime.now())
+                await self.channel_layer.group_send(
+                    self.session_group_name,
+                    {
+                        "type": "session_update",
+                        "session_status": session_status,
+                        "username": user.username,
+                        "session_id": session_id
+                    }
+                )
 
     # Receive message from room group
     async def session_update(self, event):
@@ -140,7 +188,7 @@ class SessionConsumer(AsyncWebsocketConsumer):
                     student_id=curr_user,
                     session_id=session,
                     attended=True,
-                    progress=json.dumps({})
+                    progress=json.dumps([])
                 )
                 await self.channel_layer.group_send(
                     self.session_group_name,
@@ -152,7 +200,7 @@ class SessionConsumer(AsyncWebsocketConsumer):
                     }
                 )
             except django.db.utils.DatabaseError:
-                print("nothing")
+                pass
 
         # Send session_statusto WebSocket
         await self.send(text_data=json.dumps(
@@ -185,4 +233,21 @@ class SessionConsumer(AsyncWebsocketConsumer):
                 "student": student_info,
                 "session_id": event["session_id"],
                 "session_progress_id": event["session_progress_id"],
+            }))
+
+    async def session_progress_update(self, event):
+        student_id = event["student_id"]
+        session_progress = event["session_progress"]
+        student = await get_user(id=student_id)
+        curr_user = self.scope["user"]
+        roles = curr_user.groups.values_list('name', flat=True)
+        roles_as_list = await get_roles(roles)
+        if 'instructors' in roles_as_list:
+            student_info = json.loads(await sync_to_async(serialize)('json', student))[0][    'fields']
+            del student_info['password']
+            del student_info['is_superuser']
+            del student_info['user_permissions']
+            await self.send(text_data=json.dumps({
+                "student": student_info,
+                "session_progress": session_progress
             }))
