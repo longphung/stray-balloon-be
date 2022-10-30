@@ -27,10 +27,12 @@ def get_session(**kwargs):
     session = models.Session.objects.filter(**kwargs).first()
     return session
 
+
 @database_sync_to_async
 def get_session_progress(**kwargs):
     session_progress = models.SessionProgress.objects.filter(**kwargs).first()
     return session_progress
+
 
 @database_sync_to_async
 def get_user(**kwargs):
@@ -109,8 +111,17 @@ class SessionConsumer(AsyncWebsocketConsumer):
             self.session_group_name,
             {"type": "session_join", "username": user.username, "role": json.dumps(roles_as_list)}
         )
+        if 'students' in roles_as_list:
+            session = await get_session(instructor_id=self.session_name, end_time__isnull=False)
+            session_id = session.id
+            session_status = "in_progress"
+            await self.send(json.dumps({
+                "type": "session_info_student",
+                "sessionStatus": session_status,
+                "sessionId": session_id
+            }))
         if 'instructors' in roles_as_list:
-            session = await get_session(instructor_id=user.id, start_time__isnull=True, end_time__isnull=True)
+            session = await get_session(instructor_id=user.id, end_time__isnull=False)
             if session is None:
                 session_id = await create_session(instructor_id=user)
                 session_status = "created"
@@ -152,6 +163,10 @@ class SessionConsumer(AsyncWebsocketConsumer):
             session_id = payload["session_id"]
             if 'instructors' not in roles_as_list or session_status not in ['started', 'ended']:
                 return
+            #
+            # try:
+            # except KeyError:
+            #     session_id = await create_session(instructor_id=user)
 
             if session_status == 'started':
                 await update_session(session_id, start_time=datetime.datetime.now())
@@ -232,17 +247,16 @@ class SessionConsumer(AsyncWebsocketConsumer):
         curr_user = self.scope["user"]
         roles = curr_user.groups.values_list('name', flat=True)
         roles_as_list = await get_roles(roles)
-        if 'instructors' in roles_as_list:
-            student_info = json.loads(event["student"])[0]['fields']
-            del student_info['password']
-            del student_info['is_superuser']
-            del student_info['user_permissions']
-            await self.send(text_data=json.dumps({
-                "type": "session_progress_started",
-                "student": student_info,
-                "session_id": event["session_id"],
-                "session_progress_id": event["session_progress_id"],
-            }))
+        student_info = json.loads(event["student"])[0]['fields']
+        del student_info['password']
+        del student_info['is_superuser']
+        del student_info['user_permissions']
+        await self.send(text_data=json.dumps({
+            "type": "session_progress_started",
+            "student": student_info,
+            "session_id": event["session_id"],
+            "session_progress_id": event["session_progress_id"],
+        }))
 
     async def session_progress_update(self, event):
         student_id = event["student_id"]
@@ -251,12 +265,11 @@ class SessionConsumer(AsyncWebsocketConsumer):
         curr_user = self.scope["user"]
         roles = curr_user.groups.values_list('name', flat=True)
         roles_as_list = await get_roles(roles)
-        if 'instructors' in roles_as_list:
-            student_info = json.loads(await sync_to_async(serialize)('json', student))[0][    'fields']
-            del student_info['password']
-            del student_info['is_superuser']
-            del student_info['user_permissions']
-            await self.send(text_data=json.dumps({
-                "student": student_info,
-                "session_progress": session_progress
-            }))
+        student_info = json.loads(await sync_to_async(serialize)('json', student))[0]['fields']
+        del student_info['password']
+        del student_info['is_superuser']
+        del student_info['user_permissions']
+        await self.send(text_data=json.dumps({
+            "student": student_info,
+            "session_progress": session_progress
+        }))
