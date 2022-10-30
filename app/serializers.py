@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 from app.models import Question, QuestionAnswer, SessionProgress, Session, SessionsQuestions
 
@@ -15,6 +16,11 @@ class QuestionAnswerSerializer(serializers.ModelSerializer):
 
 
 class SessionProgressSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['progress'] = json.loads(ret['progress'])
+        return ret
+
     class Meta:
         model = SessionProgress
         fields = '__all__'

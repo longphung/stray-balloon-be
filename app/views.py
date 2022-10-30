@@ -72,3 +72,30 @@ class AnswersOfQuestionsViews(views.APIView):
         return Response(
             serializer.data
         )
+
+class SessionProgressOfStudent(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = SessionProgressSerializer
+
+    @utils.extend_schema(
+        parameters=[
+            utils.OpenApiParameter(name='session_id', description='Session ID', required=True, type=int),
+            utils.OpenApiParameter(name='student_id', description='Student ID', required=True, type=int)
+        ],
+        responses={
+            200: SessionProgressSerializer,
+            404: {},
+        },
+    )
+    def get(self, request):
+        session_id = request.query_params['session_id']
+        student_id = request.query_params['student_id']
+        session_progress = SessionProgress.objects.filter(session_id=session_id, student_id=student_id).first()
+        if session_progress is None:
+            return Response(
+                {}, status=404
+            )
+        serializer = SessionProgressSerializer(session_progress)
+        return Response(
+            serializer.data
+        )

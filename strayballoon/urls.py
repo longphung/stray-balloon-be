@@ -33,12 +33,10 @@ router.register(r'session-progress', app_views.SessionProgressViewSet)
 router.register(r'session', app_views.SessionViewSet)
 router.register(r'sessions-questions', app_views.SessionsQuestionsViewSet)
 
-
 websocket_urlpatterns = [
     re_path(r"ws/chat/(?P<room_name>\w+)$", consumers.ChatConsumer.as_asgi()),
     re_path(r"ws/session/(?P<session_name>\w+)$", consumers.SessionConsumer.as_asgi()),
 ]
-
 
 base_patterns = [
     path('', include(router.urls)),
@@ -48,7 +46,8 @@ base_patterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('auth/', CustomAuthToken.as_view()),
-    path('answers-of-question/', app_views.AnswersOfQuestionsViews.as_view(), name="AnswersOfQuestions")
+    path('answers-of-question/', app_views.AnswersOfQuestionsViews.as_view(), name="AnswersOfQuestions"),
+    path('session-progress-of-students/', app_views.SessionProgressOfStudent.as_view(), name="SessionProgressOfStudent")
 ]
 
 urlpatterns = [

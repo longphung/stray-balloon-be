@@ -28,6 +28,11 @@ def get_session(**kwargs):
     return session
 
 @database_sync_to_async
+def get_session_progress(**kwargs):
+    session_progress = models.SessionProgress.objects.filter(**kwargs).first()
+    return session_progress
+
+@database_sync_to_async
 def get_user(**kwargs):
     user = User.objects.filter(**kwargs)
     return list(user)
@@ -182,14 +187,18 @@ class SessionConsumer(AsyncWebsocketConsumer):
         roles_as_list = await get_roles(roles)
 
         if session_status == "started" and 'students' in roles_as_list:
-            session = await get_session(id=session_id)
             try:
-                session_progress_id = await create_session_progress(
-                    student_id=curr_user,
-                    session_id=session,
-                    attended=True,
-                    progress=json.dumps([])
-                )
+                session = await get_session(id=session_id)
+                session_progress = await get_session_progress(session_id=session_id, student_id=curr_user.id)
+                if session_progress is None:
+                    session_progress_id = await create_session_progress(
+                        student_id=curr_user,
+                        session_id=session,
+                        attended=True,
+                        progress=json.dumps([])
+                    )
+                else:
+                    session_progress_id = session_progress.id
                 await self.channel_layer.group_send(
                     self.session_group_name,
                     {
