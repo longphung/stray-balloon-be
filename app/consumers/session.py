@@ -61,6 +61,7 @@ def create_session_progress(**kwargs):
 def handle_session_progress_update(self, data):
     session_progress = models.SessionProgress.objects.filter(id=data["session_progress_id"]).first()
     session_question_progress = json.loads(session_progress.progress)
+    # if session progress has existed then do nothing
     for i in session_question_progress:
         if i['question_id'] == data["question_id"]:
             return
@@ -81,7 +82,8 @@ def handle_session_progress_update(self, data):
         {
             "type": "session_progress_update",
             "student_id": data['user'].id,
-            "session_progress": new_session_progress,
+            "session_progress": session_progress.progress,
+            "question_set": data['question_set'],
         }
     )
 
@@ -169,6 +171,7 @@ class SessionConsumer(AsyncWebsocketConsumer):
                 'question_status': payload['question_status'],
                 "answer_taken": payload['answer_taken'],
                 "time_taken": payload['time_taken'],
+                "question_set": payload['question_set'],
                 'user': user
             })
 
@@ -263,9 +266,6 @@ class SessionConsumer(AsyncWebsocketConsumer):
         }))
 
     async def session_progress_started(self, event):
-        curr_user = self.scope["user"]
-        roles = curr_user.groups.values_list('name', flat=True)
-        roles_as_list = await get_roles(roles)
         student_info = json.loads(event["student"])[0]['fields']
         del student_info['password']
         del student_info['is_superuser']
@@ -279,16 +279,15 @@ class SessionConsumer(AsyncWebsocketConsumer):
 
     async def session_progress_update(self, event):
         student_id = event["student_id"]
-        session_progress = event["session_progress"]
+        session_progress = json.loads(event["session_progress"])
         student = await get_user(id=student_id)
-        curr_user = self.scope["user"]
-        roles = curr_user.groups.values_list('name', flat=True)
-        roles_as_list = await get_roles(roles)
         student_info = json.loads(await sync_to_async(serialize)('json', student))[0]['fields']
         del student_info['password']
         del student_info['is_superuser']
         del student_info['user_permissions']
         await self.send(text_data=json.dumps({
+            "type": "session_progress_update",
             "student": student_info,
-            "session_progress": session_progress
+            "sessionProgress": session_progress,
+            "questionSet": event["question_set"]
         }))
