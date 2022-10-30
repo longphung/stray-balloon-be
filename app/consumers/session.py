@@ -112,7 +112,7 @@ class SessionConsumer(AsyncWebsocketConsumer):
             {"type": "session_join", "username": user.username, "role": json.dumps(roles_as_list)}
         )
         if 'students' in roles_as_list:
-            session = await get_session(instructor_id=self.session_name, end_time__isnull=False)
+            session = await get_session(instructor_id=self.session_name, end_time__isnull=True)
             session_id = session.id
             session_status = "in_progress"
             await self.send(json.dumps({
@@ -121,7 +121,7 @@ class SessionConsumer(AsyncWebsocketConsumer):
                 "sessionId": session_id
             }))
         if 'instructors' in roles_as_list:
-            session = await get_session(instructor_id=user.id, end_time__isnull=False)
+            session = await get_session(instructor_id=user.id, end_time__isnull=True)
             if session is None:
                 session_id = await create_session(instructor_id=user)
                 session_status = "created"
