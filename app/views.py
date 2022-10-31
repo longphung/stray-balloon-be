@@ -143,7 +143,6 @@ class StudentReportInfo(views.APIView):
         if user is None:
             return Response({}, status=404)
         session_progress = SessionProgress.objects.filter(student_id=user)
-        print(session_progress)
         ret = user
         ret.session_progress = session_progress
         serializer = StudentReportInfoSerializer(ret)
