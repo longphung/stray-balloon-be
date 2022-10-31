@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from quickstart import serializers
 from app.models import Question, QuestionAnswer, SessionProgress, Session, SessionsQuestions
 from app.serializers import QuestionSerializer, QuestionAnswerSerializer, SessionProgressSerializer, SessionSerializer, \
-    SessionQuestionsSerializer, AnswersOfQuestionsSerializer
+    SessionQuestionsSerializer, AnswersOfQuestionsSerializer, StudentReportInfoSerializer
 
 
 class QuestionsViewSet(viewsets.ModelViewSet):
@@ -120,4 +120,31 @@ class Students(views.APIView):
         if user is None:
             return Response({}, status=404)
         serializer = serializers.UserSerializer(user)
+        return Response(serializer.data)
+
+
+class StudentReportInfo(views.APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = [StudentReportInfoSerializer]
+
+    @utils.extend_schema(
+        parameters=[
+            utils.OpenApiParameter(name='username', description='Student Username', required=True, type=str),
+        ],
+        responses={
+            200: StudentReportInfoSerializer,
+            404: {},
+        },
+    )
+    def get(self, request):
+        username = request.query_params['username']
+        student_group = Group.objects.filter(name='students').first()
+        user = User.objects.filter(groups=student_group, username=username).first()
+        if user is None:
+            return Response({}, status=404)
+        session_progress = SessionProgress.objects.filter(student_id=user)
+        print(session_progress)
+        ret = user
+        ret.session_progress = session_progress
+        serializer = StudentReportInfoSerializer(ret)
         return Response(serializer.data)
