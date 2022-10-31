@@ -22,9 +22,14 @@ class SessionProgressSerializer(serializers.ModelSerializer):
         ret['progress'] = json.loads(ret['progress'])
         for i, v in enumerate(ret['progress']):
             answer = QuestionAnswer.objects.filter(id=v['answer_taken']).first()
+            question = Question.objects.filter(id=v['question_id']).first()
             if answer is None:
                 ret['progress'][i]['is_correct'] = None
+            if question is None:
+                ret['progress'][i]['question'] = None
             ret['progress'][i]['is_correct'] = answer.is_correct
+            ret['progress'][i]['question_type'] = question.type
+            ret['progress'][i]['question_level'] = question.level
 
         return ret
 
