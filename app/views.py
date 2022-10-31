@@ -114,12 +114,12 @@ class Students(views.APIView):
             404: {},
         },
     )
-    def get(self):
+    def get(self, request):
         student_group = Group.objects.filter(name='students').first()
-        user = User.objects.filter(groups=student_group).first()
+        user = User.objects.filter(groups=student_group)
         if user is None:
             return Response({}, status=404)
-        serializer = serializers.UserSerializer(user)
+        serializer = serializers.UserSerializer(user, many=True)
         return Response(serializer.data)
 
 
